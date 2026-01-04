@@ -302,7 +302,7 @@ const interactiveObjects = []; // للسوشيال + التفاعل
 const techMeshes = [];         // للتقنيات (الدوران)
 
 loader.load(
-  "/assets/models/room.glb",
+  "https://res.cloudinary.com/dax8e6mrx/image/upload/v1767543868/room_raxuhs.glb",
   (gltf) => {
     gltf.scene.traverse(o => {
       /* ===========================
