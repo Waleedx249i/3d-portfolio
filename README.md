@@ -1,51 +1,83 @@
-# 3D Portfolio Website
+# 🎨 3D Portfolio Website
 
-## Description
+![Demo](https://img.shields.io/badge/demo-Vercel-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Vite](https://img.shields.io/badge/bundler-vite-yellow)
 
-This project is a 3D portfolio website designed to showcase my skills, projects, and experience as a professional 3D developer. The website leverages modern web technologies to create an interactive and visually appealing experience.
+A sleek, interactive 3D portfolio built with modern web tech to showcase projects, animations, and design skills.
 
-## Features
+---
 
-- Interactive 3D models and animations.
-- Responsive design for all devices.
-- Smooth navigation and user-friendly interface.
-- Integration with social media and contact forms.
+## 🌐 Live Demo
 
-## Technologies Used
+**Try it now:** [3D Portfolio — Live Demo](https://3d-portfolio-psi-virid.vercel.app/) 🚀
 
-- **Three.js**: For rendering 3D graphics.
-- **HTML5, CSS3, JavaScript**: Core web technologies.
-- **GSAP**: For animations.
-- **vite**: For bundling and optimizing assets.
+---
 
-## Installation
+## ✨ Features
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Waleedx249i/3d-portfolio.git
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd 3d-portfolio
-   ```
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
+- 🎯 Interactive 3D models and camera-driven scenes
+- 📱 Responsive layout for desktop and mobile
+- ⚡ Smooth animations (GSAP) and polished UI transitions
+- 🔗 Easy content customization via the `src/` folder
 
-## Usage
+---
 
-- Open the website in your browser at `http://localhost:3000`.
-- Customize the content in the `src` folder to add your own projects and details.
+## 🛠️ Tech Stack
 
-## License
+| Technology      | Purpose               |
+| --------------- | --------------------- |
+| Three.js        | 3D rendering          |
+| Vite            | Dev server & bundling |
+| GSAP            | Animation             |
+| HTML / CSS / JS | Core web platform     |
 
-This project is licensed under the [MIT License](LICENSE).
+---
 
-## Author
+## 🚀 Quick Start
 
-Developed by [Waleedx249i]. Feel free to reach out for collaboration or inquiries!
+```bash
+# Clone
+git clone https://github.com/Waleedx249i/3d-portfolio.git
+cd 3d-portfolio
+
+# Install
+npm install
+
+# Dev server (hot reload)
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+Open `http://localhost:3000` after starting the dev server.
+
+---
+
+## 📦 Deployment
+
+This project is deployed on Vercel (see demo link above). To deploy yourself, connect the repository to Vercel or run `vercel` from the project root.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Open an issue or a pull request with improvements, bug fixes, or new features.
+
+---
+
+## 📫 Contact
+
+Built by **Waleedx249i**. Find me on GitHub: `https://github.com/Waleedx249i` — open to collaborations and feedback.
+
+---
+
+## 📄 License
+
+This project is released under the **MIT License** — see the `LICENSE` file for details.
+
+---
+
+Enjoy the demo and let me know if you want screenshots, a GIF, or more examples added! ✨
