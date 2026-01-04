@@ -2,9 +2,76 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { gsap } from "gsap";
 
-/* ===========================
-   Scene / Camera / Renderer
-   =========================== */
+// --- كود جافا سكريبت الخاص باللودر فقط ---
+const canvas = document.getElementById('loader-canvas');
+const ctx = canvas.getContext('2d');
+let progress = 0;
+let targetProgress = 0;
+
+// ضبط أبعاد الكانفس
+canvas.width = 180 * window.devicePixelRatio;
+canvas.height = 180 * window.devicePixelRatio;
+ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+function draw() {
+  ctx.clearRect(0, 0, 180, 180);
+  progress += (targetProgress - progress) * 0.05;
+
+  // الدائرة الخلفية
+  ctx.beginPath();
+  ctx.arc(90, 90, 60, 0, Math.PI * 2);
+  ctx.strokeStyle = '#222';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  // دائرة التحميل (Neon)
+  ctx.beginPath();
+  ctx.arc(90, 90, 60, -Math.PI/2, (-Math.PI/2) + (Math.PI * 2 * progress));
+  ctx.strokeStyle = '#00f2ff';
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // النسبة المئوية
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center';
+  ctx.font = '16px sans-serif';
+  ctx.fillText(Math.round(progress * 100) + '%', 90, 95);
+
+  if (progress < 0.99) {
+    requestAnimationFrame(draw);
+  } else {
+    // إظهار التعليمات عند انتهاء التحميل
+    document.getElementById('instructions-ui').style.opacity = '1';
+    document.getElementById('instructions-ui').style.pointerEvents = 'auto';
+  }
+}
+draw();
+
+// محاكاة تحميل (يمكنك ربط targetProgress بـ LoadingManager في ملفك الأساسي)
+// لتجربة الكود الآن، سنقوم بزيادة النسبة تلقائياً:
+let interval = setInterval(() => {
+  targetProgress += 0.1;
+  if(targetProgress >= 1) clearInterval(interval);
+}, 200);
+
+// كشف نوع الجهاز
+if(/Mobi|Android/i.test(navigator.userAgent)) {
+  document.getElementById('mobile-msg').classList.remove('hidden');
+  document.getElementById('desktop-msg').classList.add('hidden');
+}
+
+// زر البداية لإخفاء اللودر
+document.getElementById('start-btn').onclick = () => {
+  document.getElementById('loader-container').style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('loader-container').style.display = 'none';
+  }, 600);
+};
+
+// ===========================
+// Scene / Camera / Renderer
+// ===========================
 export const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x202020);
 
@@ -12,17 +79,15 @@ export const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window
 camera.position.set(-3.055, 7.686, 2.889);
 camera.rotation.set(-0.769, -0.774, -0.595);
 
-
 export const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ReinhardToneMapping;
 renderer.toneMappingExposure = 1.0;
 document.body.appendChild(renderer.domElement);
 
-/* ===========================
-   Camera Shots
-   =========================== */
-
+// ===========================
+// Camera Shots
+// ===========================
 const cameraShots = [
   {
     pos: { x: -3.055, y: 7.686, z: 2.889 },
@@ -153,10 +218,9 @@ document.getElementById("prev").onclick = () => {
   goToShot(currentShot - 1);
 };
 
-
-/* ===========================
-   Lights
-   =========================== */
+// ===========================
+// Lights
+// ===========================
 scene.add(new THREE.AmbientLight(0xffffff, 1));
 
 const whiteLight = new THREE.DirectionalLight(0xffffff, 2.0);
@@ -166,22 +230,19 @@ scene.add(whiteLight);
 // ===========================
 // Cinematic Colored Lights (Improved)
 // ===========================
-
-// 🔴 Red Light (يمين المشهد)
 const redLight = new THREE.SpotLight(
-  0xff0000,   // لون أقوى
-  50,         // intensity (قوة أعلى)
-  120,        // distance
-  Math.PI / 2.5, // angle (أوسع = ضبابية أكتر)
-  0.5,        // penumbra (حواف ناعمة)
-  1           // decay
+  0xff0000,
+  50,
+  120,
+  Math.PI / 2.5,
+  0.5,
+  1
 );
 redLight.position.set(5, 6, 2);
 redLight.target.position.set(0, 2, 0);
 scene.add(redLight);
 scene.add(redLight.target);
 
-// 🔵 Blue Light (شمال المشهد)
 const blueLight = new THREE.SpotLight(
   0x0000ff,
   50,
@@ -195,10 +256,9 @@ blueLight.target.position.set(0, 2, 0);
 scene.add(blueLight);
 scene.add(blueLight.target);
 
-
-/* ===========================
-   Links & Hover Colors
-   =========================== */
+// ===========================
+// Links & Hover Colors
+// ===========================
 const links = {
   facebook: "https://web.facebook.com/waleedxcrazy/",
   whatsapp: "https://wa.me/249128517891",
@@ -214,10 +274,29 @@ const hoverColors = {
 };
 
 const clickableNames = new Set([...Object.keys(links), ...Object.keys(hoverColors)]);
-/* ===========================
-   Loader / interactiveObjects / techMeshes
-   =========================== */
-const loader = new GLTFLoader();
+
+// ===========================
+// LoadingManager (مرتبط باللودر الكانفس)
+// ===========================
+const manager = new THREE.LoadingManager();
+
+manager.onProgress = (url, loaded, total) => {
+  // يحدث targetProgress أثناء تحميل الأصول عن طريق THREE.LoadingManager
+  targetProgress = loaded / total;
+};
+
+manager.onLoad = () => {
+  targetProgress = 1;
+
+  // إظهار التعليمات أو إخفاء اللودر التلقائي ممكن هنا
+  document.getElementById('instructions-ui').style.opacity = '1';
+  document.getElementById('instructions-ui').style.pointerEvents = 'auto';
+};
+
+// ===========================
+// Loader / interactiveObjects / techMeshes
+// ===========================
+const loader = new GLTFLoader(manager);
 
 const interactiveObjects = []; // للسوشيال + التفاعل
 const techMeshes = [];         // للتقنيات (الدوران)
@@ -274,11 +353,9 @@ function rotateTechMeshes() {
   });
 }
 
-
-
-/* ===========================
-   Raycaster / Hover Effect
-   =========================== */
+// ===========================
+// Raycaster / Hover Effect
+// ===========================
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let hoveredRoot = null;
@@ -367,10 +444,9 @@ window.addEventListener("click", () => {
   }
 });
 
-
-/* ===========================
-   Right-click camera debug only
-   =========================== */
+// ===========================
+// Right-click camera debug only
+// ===========================
 window.addEventListener("contextmenu", (event) => {
   event.preventDefault();
 
@@ -391,9 +467,9 @@ window.addEventListener("contextmenu", (event) => {
   console.log("====================");
 });
 
-/* ===========================
-   Controls (WASD Q/E + arrows)
-   =========================== */
+// ===========================
+// Controls (WASD Q/E + arrows)
+// ===========================
 const keys = {};
 window.addEventListener("keydown", e => keys[e.code] = true);
 window.addEventListener("keyup", e => keys[e.code] = false);
@@ -417,7 +493,7 @@ function updateControls() {
   if (keys.ArrowLeft)  euler.y += rot;   // yaw local
   if (keys.ArrowRight) euler.y -= rot;
   if (keys.ArrowUp)    euler.x += rot;   // pitch local
-  if (keys.ArrowDown)  euler.x -= rot;
+  if (keys.ArrowDown)  euler.x += rot;
 
   // clamp للـ pitch
   const MAX = Math.PI / 2 - 0.01;
@@ -425,9 +501,10 @@ function updateControls() {
 
   camera.quaternion.setFromEuler(euler);
 }
-/* ===========================
-gsap  Animation loop
-    =========================== */
+
+// ===========================
+// gsap  Animation loop
+// ===========================
 let currentShot = 0;
 let isAnimating = false;
 
@@ -461,8 +538,6 @@ function goToShot(index) {
   }, 0);
 }
 
-
-  
 window.addEventListener("keydown", (e) => {
   // أرقام 1–9
   if (e.code.startsWith("Digit")) {
@@ -471,9 +546,9 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-/* ===========================
-   Animation loop
-   =========================== */
+// ===========================
+// Animation loop
+// ===========================
 function animate() {
   requestAnimationFrame(animate);
   updateControls();
@@ -482,9 +557,9 @@ function animate() {
 }
 animate();
 
-/* ===========================
-   Resize
-   =========================== */
+// ===========================
+// Resize
+// ===========================
 window.addEventListener("resize", () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
@@ -492,6 +567,6 @@ window.addEventListener("resize", () => {
   renderer.setSize(innerWidth, innerHeight);
 });
 
-/* ===========================
-   End of main.js
-   =========================== */
+// ===========================
+// End of main + loader
+// ===========================
